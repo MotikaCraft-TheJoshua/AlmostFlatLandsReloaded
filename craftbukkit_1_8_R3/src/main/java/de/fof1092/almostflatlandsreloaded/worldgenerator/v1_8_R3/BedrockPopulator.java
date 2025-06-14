@@ -10,10 +10,10 @@ import org.bukkit.generator.ChunkGenerator.ChunkData;
 import java.io.File;
 import java.util.Random;
 
-/**
- * BedrockPopulator is responsible for creating the bedrock layer of the AFLR world.
- */
 final class BedrockPopulator {
+
+    private static long lastLogTime = 0;
+    private static final long LOG_INTERVAL = 3000; // 3 seconds
 
     private BedrockPopulator() {
         throw new IllegalStateException("Utility class");
@@ -23,46 +23,45 @@ final class BedrockPopulator {
         File fileConfig = new File("plugins/AlmostFlatlandsReloaded/Config.yml");
         FileConfiguration ymlFileConfig = YamlConfiguration.loadConfiguration(fileConfig);
         boolean flatBedrockEnabled = ymlFileConfig.getBoolean("FlatBedrock.Enabled");
-        Bukkit.getLogger().info("[AlmostFlatLandsReloaded] BedrockPopulator: x=" + x + ", z=" + z + ", flatBedrockEnabled=" + flatBedrockEnabled + ", Options.flatBedrockEnabled=" + Options.flatBedrockEnabled);
+
+        // Log only for first block in chunk (x=0, z=0) and if 3 seconds have passed
+        if (x == 0 && z == 0 && System.currentTimeMillis() - lastLogTime >= LOG_INTERVAL) {
+            Bukkit.getLogger().info("[AlmostFlatLandsReloaded] BedrockPopulator: flatBedrockEnabled=" + flatBedrockEnabled + ", Options.flatBedrockEnabled=" + Options.flatBedrockEnabled);
+            lastLogTime = System.currentTimeMillis();
+        }
 
         if (flatBedrockEnabled) {
-            Bukkit.getLogger().info("[AlmostFlatLandsReloaded] BedrockPopulator: Generating flat bedrock, thickness=" + Options.flatBedrockThickness);
             for (int y = Options.worldDepth; y < Options.worldDepth + Options.flatBedrockThickness; y++) {
                 cd.setBlock(x, y, z, Material.BEDROCK);
-                Bukkit.getLogger().info("[AlmostFlatLandsReloaded] BedrockPopulator: Set bedrock at y=" + y);
             }
         } else {
-            Bukkit.getLogger().info("[AlmostFlatLandsReloaded] BedrockPopulator: Generating randomized bedrock");
             int randomBlockBedrock1 = random.nextInt(100) + 1;
             int randomBlockBedrock2 = random.nextInt(100) + 1;
             int randomBlockBedrock3 = random.nextInt(100) + 1;
-            Bukkit.getLogger().info("[AlmostFlatLandsReloaded] BedrockPopulator: Random values: r1=" + randomBlockBedrock1 + ", r2=" + randomBlockBedrock2 + ", r3=" + randomBlockBedrock3);
 
             cd.setBlock(x, Options.worldDepth, z, Material.BEDROCK);
-            Bukkit.getLogger().info("[AlmostFlatLandsReloaded] BedrockPopulator: Set bedrock at y=" + Options.worldDepth);
 
             if (randomBlockBedrock1 <= 80) {
                 cd.setBlock(x, Options.worldDepth + 1, z, Material.BEDROCK);
-                Bukkit.getLogger().info("[AlmostFlatLandsReloaded] BedrockPopulator: Set bedrock at y=" + (Options.worldDepth + 1));
             } else {
                 cd.setBlock(x, Options.worldDepth + 1, z, Material.AIR);
-                Bukkit.getLogger().info("[AlmostFlatLandsReloaded] BedrockPopulator: Set air at y=" + (Options.worldDepth + 1));
             }
 
             if (randomBlockBedrock2 <= 60) {
                 cd.setBlock(x, Options.worldDepth + 2, z, Material.BEDROCK);
-                Bukkit.getLogger().info("[AlmostFlatLandsReloaded] BedrockPopulator: Set bedrock at y=" + (Options.worldDepth + 2));
             } else {
                 cd.setBlock(x, Options.worldDepth + 2, z, Material.AIR);
-                Bukkit.getLogger().info("[AlmostFlatLandsReloaded] BedrockPopulator: Set air at y=" + (Options.worldDepth + 2));
             }
 
             if (randomBlockBedrock3 <= 40) {
                 cd.setBlock(x, Options.worldDepth + 3, z, Material.BEDROCK);
-                Bukkit.getLogger().info("[AlmostFlatLandsReloaded] BedrockPopulator: Set bedrock at y=" + (Options.worldDepth + 3));
             } else {
                 cd.setBlock(x, Options.worldDepth + 3, z, Material.AIR);
-                Bukkit.getLogger().info("[AlmostFlatLandsReloaded] BedrockPopulator: Set air at y=" + (Options.worldDepth + 3));
+            }
+
+            // Log random values only once per chunk
+            if (x == 0 && z == 0 && System.currentTimeMillis() - lastLogTime >= LOG_INTERVAL) {
+                Bukkit.getLogger().info("[AlmostFlatLandsReloaded] BedrockPopulator: Random values: r1=" + randomBlockBedrock1 + ", r2=" + randomBlockBedrock2 + ", r3=" + randomBlockBedrock3);
             }
         }
 
