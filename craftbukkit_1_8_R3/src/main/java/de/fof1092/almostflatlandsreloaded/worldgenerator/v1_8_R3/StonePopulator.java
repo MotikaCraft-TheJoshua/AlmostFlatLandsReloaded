@@ -30,14 +30,14 @@ final class StonePopulator {
 	 * @param originalMaterials the original material names from Config.yml
 	 * @return the new ChunkData of the chunk
 	 */
-	static ChunkData populate(int x, int y, int z, ChunkData cd, Random random) {
+	static ChunkData populate(int x, int y, int z, ChunkData cd, Random random, List<String> worldUndergroundMaterialsNames) {
 		int startY = Options.worldDepth + (Options.flatBedrockEnabled ? Options.flatBedrockThickness : 1);
-		ServerLog.log("StonePopulator: x=" + x + ", z=" + z + ", startY=" + startY + ", flatBedrockEnabled=" + Options.flatBedrockEnabled);
-		int randomBlockType = random.nextInt(Options.worldUndergroundMaterials.size());
+		Bukkit.getLogger().info("[AlmostFlatLandsReloaded] StonePopulator: x=" + x + ", z=" + z + ", startY=" + startY + ", flatBedrockEnabled=" + Options.flatBedrockEnabled);
+		int randomBlockType = random.nextInt(worldUndergroundMaterialsNames.size());
 
 		for (int newY = startY; newY < y; newY++) {
 			cd.setBlock(x, newY, z, Options.worldUndergroundMaterials.get(randomBlockType));
-			ServerLog.log("StonePopulator: Set block at y=" + newY + ", material=" + Options.worldUndergroundMaterials.get(randomBlockType));
+			Bukkit.getLogger().info("[AlmostFlatLandsReloaded] StonePopulator: Set block at y=" + newY + ", material=" + Options.worldUndergroundMaterials.get(randomBlockType));
 		}
 
 		return cd;
