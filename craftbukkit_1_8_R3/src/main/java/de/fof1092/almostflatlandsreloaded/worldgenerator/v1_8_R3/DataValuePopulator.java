@@ -1,56 +1,44 @@
+```java
 package de.fof1092.almostflatlandsreloaded.worldgenerator.v1_8_R3;
 
 import de.fof1092.almostflatlandsreloaded.Options;
-import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.generator.BlockPopulator;
 import org.bukkit.util.noise.SimplexOctaveGenerator;
-
 import java.util.Random;
 
 /**
  * DataValuePopulator applies legacy data values for blocks in Minecraft 1.8–1.12.
  */
 final class DataValuePopulator extends BlockPopulator {
-
     @Override
     public void populate(World world, Random random, Chunk chunk) {
-        Bukkit.getLogger().info("[AlmostFlatLandsReloaded] DataValuePopulator: Populating chunk " + chunk.getX() + ", " + chunk.getZ());
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
                 int realX = x + chunk.getX() * 16;
                 int realZ = z + chunk.getZ() * 16;
-
                 SimplexOctaveGenerator wgen = new SimplexOctaveGenerator(world, 8);
                 wgen.setScale(0.015625D);
                 int height = (int) ((wgen.noise(realX, realZ, 0.5D, 0.5D) / 0.75) + Options.worldHeight);
-
                 int startY = Options.worldDepth + (Options.flatBedrockEnabled ? Options.flatBedrockThickness : 1);
-                Bukkit.getLogger().info("[AlmostFlatLandsReloaded] DataValuePopulator: x=" + realX + ", z=" + realZ + ", startY=" + startY);
 
-                // Process underground materials
                 for (int y = startY; y < height; y++) {
-                    // Skip bedrock blocks
-                    if (chunk.getBlock(x, y, z).getType() == Material.BEDROCK) {
-                        Bukkit.getLogger().info("[AlmostFlatLandsReloaded] DataValuePopulator: Skipped bedrock at y=" + y);
+                    if (chunk.getBlock(x, y, z).getType() == Material.BEDROCK || chunk.getBlock(x, y, z).getType() == Material.AIR) {
                         continue;
                     }
                     int randomBlockType = random.nextInt(Options.worldUndergroundMaterials.size());
                     Material material = Options.worldUndergroundMaterials.get(randomBlockType);
                     String originalName = Options.worldUndergroundMaterialNames.get(randomBlockType);
-
                     if (material == Material.STONE) {
                         byte data = getDataValue(originalName);
                         if (data != 0) {
                             Util.setBlockFast(world, realX, y, realZ, material.getId(), data);
-                            Bukkit.getLogger().info("[AlmostFlatLandsReloaded] DataValuePopulator: Set block at y=" + y + ", material=" + originalName + ", data=" + data);
                         }
                     }
                 }
 
-                // Process ores
                 for (int i = 0; i < Options.worldOres.size(); i++) {
                     Material material = Options.worldOres.get(i);
                     String originalName = Options.worldOreNames.get(i);
@@ -64,9 +52,8 @@ final class DataValuePopulator extends BlockPopulator {
                                 int roll = random.nextInt(100) + 1;
                                 if (roll <= chance) {
                                     int rndY = random.nextInt((maxHeight - startY) - 4) + 4 + startY;
-                                    if (rndY <= height && chunk.getBlock(x, rndY, z).getType() != Material.BEDROCK) {
+                                    if (rndY <= height && chunk.getBlock(x, rndY, z).getType() != Material.BEDROCK && chunk.getBlock(x, rndY, z).getType() != Material.AIR) {
                                         Util.setBlockFast(world, realX, rndY, realZ, material.getId(), data);
-                                        Bukkit.getLogger().info("[AlmostFlatLandsReloaded] DataValuePopulator: Set ore at y=" + rndY + ", material=" + originalName);
                                     }
                                 }
                             }
@@ -74,14 +61,12 @@ final class DataValuePopulator extends BlockPopulator {
                     }
                 }
 
-                // Process ground and pre-ground materials
                 int y = height;
                 if (Options.worldGenerateWater && y < Options.worldHeight) {
                     for (int newY = y; newY < y + 4; newY++) {
                         int randomBlockType = random.nextInt(Options.worldWaterGroundMaterials.size());
                         Material material = Options.worldWaterGroundMaterials.get(randomBlockType);
                         String originalName = Options.worldWaterGroundMaterialNames.get(randomBlockType);
-
                         if (material == Material.STONE) {
                             byte data = getDataValue(originalName);
                             if (data != 0) {
@@ -95,7 +80,6 @@ final class DataValuePopulator extends BlockPopulator {
                         int randomBlockType = random.nextInt(Options.worldPreGroundMaterials.size());
                         Material material = Options.worldPreGroundMaterials.get(randomBlockType);
                         String originalName = Options.worldPreGroundMaterialNames.get(randomBlockType);
-
                         if (material == Material.STONE) {
                             byte data = getDataValue(originalName);
                             if (data != 0) {
@@ -104,11 +88,9 @@ final class DataValuePopulator extends BlockPopulator {
                         }
                     }
                     y += 3;
-
                     int randomBlockType = random.nextInt(Options.worldGroundMaterials.size());
                     Material material = Options.worldGroundMaterials.get(randomBlockType);
                     String originalName = Options.worldGroundMaterialNames.get(randomBlockType);
-
                     if (material == Material.GRASS || material == Material.STONE) {
                         byte data = getDataValue(originalName);
                         if (data != 0 || material == Material.GRASS) {
@@ -127,7 +109,7 @@ final class DataValuePopulator extends BlockPopulator {
             try {
                 return Byte.parseByte(originalName.split(":")[1]);
             } catch (NumberFormatException e) {
-                // Fallback to mapping
+                return 0;
             }
         }
         switch (materialName.toUpperCase()) {
@@ -138,9 +120,9 @@ final class DataValuePopulator extends BlockPopulator {
             case "ANDESITE":
                 return 5;
             case "GRASS_BLOCK":
-                return 0; // GRASS
+                return 0;
             default:
-                return 0; // Default for STONE or other materials
+                return 0;
         }
     }
 
