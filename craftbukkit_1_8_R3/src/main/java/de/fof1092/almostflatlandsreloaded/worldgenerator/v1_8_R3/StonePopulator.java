@@ -6,7 +6,6 @@ import java.util.Random;
 import de.fof1092.almostflatlandsreloaded.Options;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.generator.ChunkGenerator.ChunkData;
 
 /**
@@ -28,6 +27,7 @@ final class StonePopulator {
 	 * @param originalName The original material name from Config.yml (e.g., "ANDESITE", "STONE:5").
 	 * @return An array of [blockId, dataValue].
 	 */
+	@SuppressWarnings("deprecation")
 	private static int[] getBlockIdAndData(Material material, String originalName) {
 		int blockId = material.getId(); // Get NMS block ID
 		byte data = 0;
@@ -71,11 +71,10 @@ final class StonePopulator {
 	 * @param cd the current ChunkData of the chunk
 	 * @param random the randomizer of the world
 	 * @param originalMaterials the original material names from Config.yml
+	 * @param world the world being generated
 	 * @return the new ChunkData of the chunk
 	 */
-	static ChunkData populate(int x, int y, int z, ChunkData cd, Random random, List<String> originalMaterials) {
-		World world = ((CraftWorld) cd.getClass().getMethod("getWorld").invoke(cd)).getHandle().getWorld();
-
+	static ChunkData populate(int x, int y, int z, ChunkData cd, Random random, List<String> originalMaterials, World world) {
 		for (int newY = Options.worldDepth + 1; newY < y; newY++) {
 			int randomBlockType = random.nextInt(Options.worldUndergroundMaterials.size());
 			Material material = Options.worldUndergroundMaterials.get(randomBlockType);
