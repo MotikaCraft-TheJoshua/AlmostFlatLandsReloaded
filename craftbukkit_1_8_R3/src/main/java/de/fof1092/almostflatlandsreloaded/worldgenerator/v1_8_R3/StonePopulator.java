@@ -1,43 +1,25 @@
 package de.fof1092.almostflatlandsreloaded.worldgenerator.v1_8_R3;
 
 import de.fof1092.almostflatlandsreloaded.Options;
-import org.bukkit.Bukkit;
 import org.bukkit.generator.ChunkGenerator.ChunkData;
-
 import java.util.List;
 import java.util.Random;
 
-/**
- * StonePopulator is responsible for creating the stone layer of the AFLR world.
- */
 final class StonePopulator {
+    private StonePopulator() {
+        throw new IllegalStateException("Utility class");
+    }
 
-	/**
-	 * StonePopulator has a private constructor, because it is a utility class.
-	 */
-	private StonePopulator() {
-		throw new IllegalStateException("Utility class");
-	}
+    static ChunkData populate(int x, int y, int z, ChunkData cd, Random random, List<String> worldUndergroundMaterialsNames) {
+        int startY = Options.worldDepth + (Options.flatBedrockEnabled ? Options.flatBedrockThickness : 1);
+        int randomBlockType = random.nextInt(worldUndergroundMaterialsNames.size());
 
-	/**
-	 * Creates the stone layer of the AFLR world.
-	 *
-	 * @param x the x position within the chunk
-	 * @param y the y position within the chunk
-	 * @param z the z position within the chunk
-	 * @param cd the current ChunkData of the chunk
-	 * @param random the randomizer of the world
-	 * @param originalMaterials the original material names from Config.yml
-	 * @return the new ChunkData of the chunk
-	 */
-	static ChunkData populate(int x, int y, int z, ChunkData cd, Random random, List<String> worldUndergroundMaterialsNames) {
-		int startY = Options.worldDepth + (Options.flatBedrockEnabled ? Options.flatBedrockThickness : 1);
-		int randomBlockType = random.nextInt(worldUndergroundMaterialsNames.size());
+        for (int newY = startY; newY < y; newY++) {
+            if (cd.getBlock(x, newY, z).getType() != Material.BEDROCK) {
+                cd.setBlock(x, newY, z, Options.worldUndergroundMaterials.get(randomBlockType));
+            }
+        }
 
-		for (int newY = startY; newY < y; newY++) {
-			cd.setBlock(x, newY, z, Options.worldUndergroundMaterials.get(randomBlockType));
-		}
-
-		return cd;
-	}
+        return cd;
+    }
 }
