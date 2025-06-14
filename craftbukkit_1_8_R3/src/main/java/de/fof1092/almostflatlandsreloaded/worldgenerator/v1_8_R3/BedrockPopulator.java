@@ -2,10 +2,7 @@ package de.fof1092.almostflatlandsreloaded.worldgenerator.v1_8_R3;
 
 import de.fof1092.almostflatlandsreloaded.Options;
 import org.bukkit.Material;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.generator.ChunkGenerator.ChunkData;
-import java.io.File;
 import java.util.Random;
 
 final class BedrockPopulator {
@@ -14,13 +11,8 @@ final class BedrockPopulator {
     }
 
     static ChunkData populate(int x, int z, ChunkData cd, Random random) {
-        File fileConfig = new File("plugins/AlmostFlatlandsReloaded/Config.yml");
-        FileConfiguration ymlFileConfig = YamlConfiguration.loadConfiguration(fileConfig);
-        boolean flatBedrockEnabled = ymlFileConfig.getBoolean("FlatBedrock.Enabled");
-        int thickness = ymlFileConfig.getInt("FlatBedrock.Thickness");
-
-        if (flatBedrockEnabled) {
-            for (int y = Options.worldDepth; y < Options.worldDepth + thickness; y++) {
+        if (Options.flatBedrockEnabled) {
+            for (int y = Options.worldDepth; y < Options.worldDepth + Options.flatBedrockThickness; y++) {
                 cd.setBlock(x, y, z, Material.BEDROCK);
             }
         } else {
