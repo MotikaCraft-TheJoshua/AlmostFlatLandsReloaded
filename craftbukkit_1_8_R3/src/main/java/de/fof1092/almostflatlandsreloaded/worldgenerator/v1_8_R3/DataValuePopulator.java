@@ -1,4 +1,3 @@
-```java
 package de.fof1092.almostflatlandsreloaded.worldgenerator.v1_8_R3;
 
 import de.fof1092.almostflatlandsreloaded.Options;
