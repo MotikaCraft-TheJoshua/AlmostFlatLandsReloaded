@@ -15,19 +15,19 @@
         <module>dist</module>
         <module>core</module>
         <module>craftbukkit_1_8_R3</module>
-        <module>craftbukkit_1_9_R1</module>
-        <module>craftbukkit_1_9_R2</module>
-        <module>craftbukkit_1_10_R1</module>
-        <module>craftbukkit_1_11_R1</module>
-        <module>craftbukkit_1_12_R1</module>
-        <module>craftbukkit_1_13_R1</module>
-        <module>craftbukkit_1_13_R2</module>
-        <module>craftbukkit_1_14_R1</module>
-        <module>craftbukkit_1_15_R1</module>
-        <module>craftbukkit_1_16_R1</module>
-        <module>craftbukkit_1_16_R2</module>
-        <module>craftbukkit_1_16_R3</module>
-        <module>craftbukkit_1_17_R1</module>
+        //<module>craftbukkit_1_9_R1</module>
+        //<module>craftbukkit_1_9_R2</module>
+        //<module>craftbukkit_1_10_R1</module>
+        //<module>craftbukkit_1_11_R1</module>
+        //<module>craftbukkit_1_12_R1</module>
+        //<module>craftbukkit_1_13_R1</module>
+        //<module>craftbukkit_1_13_R2</module>
+        //<module>craftbukkit_1_14_R1</module>
+        //<module>craftbukkit_1_15_R1</module>
+        //<module>craftbukkit_1_16_R1</module>
+        //<module>craftbukkit_1_16_R2</module>
+        //<module>craftbukkit_1_16_R3</module>
+        //<module>craftbukkit_1_17_R1</module>
         <module>craftbukkit_1_18_R1_AND_ABOVE</module>
     </modules>
     
