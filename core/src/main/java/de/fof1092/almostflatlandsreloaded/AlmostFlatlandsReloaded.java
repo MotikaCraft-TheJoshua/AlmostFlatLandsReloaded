@@ -22,7 +22,6 @@ import de.fof1092.almostflatlandsreloaded.pluginmanager.VersionManager;
 import de.fof1092.almostflatlandsreloaded.pluginmanager.VersionManager.BukkitVersion;
 import de.fof1092.almostflatlandsreloaded.pluginmanager.Spigot.HelpPageListener;
 import de.fof1092.almostflatlandsreloaded.pluginmanager.Spigot.UpdateListener;
-import org.bukkit.plugin.java.JavaPluginLoader;
 
 /**
  * Main is the main class of the plugin.
@@ -43,7 +42,6 @@ public class AlmostFlatlandsReloaded extends JavaPlugin {
 		return plugin;
 	}
 
-
 	@Override
 	public void onEnable() {
 		System.out.println("[AlmostFlatLandsReloaded] a Plugin by F_o_F_1092");
@@ -61,18 +59,17 @@ public class AlmostFlatlandsReloaded extends JavaPlugin {
 
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvents(new EventListener(), this);
-
 	}
 
 	/**
 	 * Provides the logic for the setup of the plugin.
 	 */
 	public static void setup() {
-		String[] packageArgs = Bukkit.getServer().getClass().getPackage().getName().replace(".",  ",").split(",");
+		String[] packageArgs = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",");
 		if (packageArgs.length >= 4) {
 			VersionManager.setVersionManager(packageArgs[3], VersionManager.ServerType.BUKKIT, false);
-		}else {
-			// problem in 1.20.6
+		} else {
+			// Problem in 1.20.6
 			VersionManager.setVersionManager("UNKNOWN", VersionManager.ServerType.BUKKIT, false);
 		}
 
@@ -119,18 +116,30 @@ public class AlmostFlatlandsReloaded extends JavaPlugin {
 				ymlFileConfig.set("World.TreeTypes", treeTypes);
 
 				ymlFileConfig.set("World.GenerateWater", false);
-				ymlFileConfig.set("World.OresChance", 100);
+
+				List<String> ores = new ArrayList<>();
+				ores.add("COAL_ORE:128:20");
+				ores.add("IRON_ORE:64:12");
+				ores.add("GOLD_ORE:32:4");
+				ores.add("EMERALD_ORE:32:4");
+				ores.add("REDSTONE_ORE:16:48");
+				ores.add("DIAMOND_ORE:16:7");
+				ores.add("LAPIS_ORE:16:5");
+				ymlFileConfig.set("World.Ores", ores);
+
+				ymlFileConfig.set("FlatBedrock.Enabled", false);
+				ymlFileConfig.set("FlatBedrock.Thickness", 1);
 
 				List<String> undergroundMaterials = new ArrayList<>();
 				if (VersionManager.getBukkitVersion() == BukkitVersion.v1_8_R3 ||
-    						VersionManager.getBukkitVersion() == BukkitVersion.v1_9_R1 ||
-    						VersionManager.getBukkitVersion() == BukkitVersion.v1_9_R2 ||
-    						VersionManager.getBukkitVersion() == BukkitVersion.v1_10_R1 ||
-    						VersionManager.getBukkitVersion() == BukkitVersion.v1_11_R1 ||
-    						VersionManager.getBukkitVersion() == BukkitVersion.v1_12_R1) {
-    					undergroundMaterials.add("STONE");
-    					undergroundMaterials.add("STONE");
-    					undergroundMaterials.add("ANDESITE");
+						VersionManager.getBukkitVersion() == BukkitVersion.v1_9_R1 ||
+						VersionManager.getBukkitVersion() == BukkitVersion.v1_9_R2 ||
+						VersionManager.getBukkitVersion() == BukkitVersion.v1_10_R1 ||
+						VersionManager.getBukkitVersion() == BukkitVersion.v1_11_R1 ||
+						VersionManager.getBukkitVersion() == BukkitVersion.v1_12_R1) {
+					undergroundMaterials.add("STONE");
+					undergroundMaterials.add("STONE");
+					undergroundMaterials.add("ANDESITE");
 				} else {
 					undergroundMaterials.add(Material.STONE.toString());
 					undergroundMaterials.add(Material.STONE.toString());
@@ -159,28 +168,37 @@ public class AlmostFlatlandsReloaded extends JavaPlugin {
 				waterGroundMaterials.add(Material.SAND.toString());
 				ymlFileConfig.set("World.WaterGroundMaterials", waterGroundMaterials);
 
-
 				ymlFileConfig.save(fileConfig);
 			} catch (IOException e) {
-				ServerLog.err("Can't create the Config.yml. [" + e.getMessage() +"]");
+				ServerLog.err("Can't create the Config.yml. [" + e.getMessage() + "]");
 			}
 		} else {
 			double version = ymlFileConfig.getDouble("Version");
 			if (version < UpdateListener.getUpdateDoubleVersion()) {
 				try {
-
 					if (version < 1.22) {
 						ymlFileConfig.set("World.Height", ymlFileConfig.getInt("World.Hight"));
 						ymlFileConfig.set("World.Hight", null);
 					}
 					if (version < 1.31) {
-						ymlFileConfig.set("World.OresChance", ymlFileConfig.getBoolean("World.GenerateOres") ? 100 : 0);
-						ymlFileConfig.set("World.GenerateOres", null);
 						ymlFileConfig.set("World.Depth", 0);
 						ymlFileConfig.set("World.GenerateWater", false);
 						ymlFileConfig.set("World.WaterHeight", null);
 					}
-
+					// Migrate worldOresChance to new ores list if present
+					if (ymlFileConfig.contains("World.OresChance")) {
+						int oresChance = ymlFileConfig.getInt("World.OresChance");
+						List<String> ores = new ArrayList<>();
+						ores.add("COAL_ORE:128:" + (oresChance * 20 / 100));
+						ores.add("IRON_ORE:64:" + (oresChance * 12 / 100));
+						ores.add("GOLD_ORE:32:" + (oresChance * 4 / 100));
+						ores.add("EMERALD_ORE:32:" + (oresChance * 4 / 100));
+						ores.add("REDSTONE_ORE:16:" + (oresChance * 48 / 100));
+						ores.add("DIAMOND_ORE:16:" + (oresChance * 7 / 100));
+						ores.add("LAPIS_ORE:16:" + (oresChance * 5 / 100));
+						ymlFileConfig.set("World.Ores", ores);
+						ymlFileConfig.set("World.OresChance", null);
+					}
 					ymlFileConfig.set("Version", UpdateListener.getUpdateDoubleVersion());
 					ymlFileConfig.save(fileConfig);
 				} catch (IOException e) {
@@ -199,15 +217,18 @@ public class AlmostFlatlandsReloaded extends JavaPlugin {
 			ServerLog.log("ServerType:§2 " + VersionManager.getSetverTypeString() + "§a, Version:§2 " + VersionManager.getBukkitVersion() + "§a | §2(Self configurated)");
 		}
 
-
 		Options.worldHeight = ymlFileConfig.getInt("World.Height");
-		Options.getWorldDepth = ymlFileConfig.getInt("World.Depth");
+		Options.worldDepth = ymlFileConfig.getInt("World.Depth");
+
+		Options.flatBedrockEnabled = ymlFileConfig.getBoolean("FlatBedrock.Enabled");
+		int thickness = ymlFileConfig.getInt("FlatBedrock.Thickness");
+		Options.flatBedrockThickness = Math.max(1, Math.min(3, thickness)); // Clamp between 1 and 3
 
 		try {
 			Options.worldBiome = Biome.valueOf(ymlFileConfig.getString("World.Biome"));
 		} catch (Exception e) {
 			Options.worldBiome = Biome.PLAINS;
-			ServerLog.err("§2Invalid Biome name: " + ymlFileConfig.get("World.Biome") + " . [" + e.getMessage() +"]");
+			ServerLog.err("§2Invalid Biome name: " + ymlFileConfig.get("World.Biome") + " . [" + e.getMessage() + "]");
 		}
 
 		Options.worldGrassChance = ymlFileConfig.getInt("World.GrassChance");
@@ -218,12 +239,30 @@ public class AlmostFlatlandsReloaded extends JavaPlugin {
 			try {
 				Options.worldTreeTypes.add(TreeType.valueOf(treeTypeString));
 			} catch (Exception e) {
-				ServerLog.err("§2Invalid TreeType name: " + treeTypeString + " . [" + e.getMessage() +"]");
+				ServerLog.err("§2Invalid TreeType name: " + treeTypeString + " . [" + e.getMessage() + "]");
 			}
 		}
 
 		Options.worldGenerateWater = ymlFileConfig.getBoolean("World.GenerateWater");
-		Options.worldOresChance = ymlFileConfig.getInt("World.OresChance");
+
+		Options.worldOres.clear();
+		Options.worldOreChances.clear();
+		Options.worldOreNames.clear();
+		for (String oreEntry : ymlFileConfig.getStringList("World.Ores")) {
+			try {
+				String[] parts = oreEntry.split(":");
+				if (parts.length == 3) {
+					Material material = processMaterial(parts[0], VersionManager.getBukkitVersion());
+					int maxHeight = Integer.parseInt(parts[1]);
+					int chance = Math.max(1, Math.min(100, Integer.parseInt(parts[2])));
+					Options.worldOres.add(material);
+					Options.worldOreChances.add(chance);
+					Options.worldOreNames.add(parts[0]);
+				}
+			} catch (Exception e) {
+				ServerLog.err("§2Invalid ore entry: " + oreEntry + " . [" + e.getMessage() + "]");
+			}
+		}
 
 		Options.worldUndergroundMaterialNames.clear();
 		Options.worldPreGroundMaterialNames.clear();
@@ -254,7 +293,6 @@ public class AlmostFlatlandsReloaded extends JavaPlugin {
 		FileConfiguration ymlFileMessage = YamlConfiguration.loadConfiguration(fileMessages);
 
 		if (!fileMessages.exists()) {
-
 			try {
 				ymlFileMessage.set("Version", UpdateListener.getUpdateDoubleVersion());
 				ymlFileMessage.set("[AlmostFlatLandsReloaded]", "&2[&a&lAFLR&2] ");
@@ -275,10 +313,9 @@ public class AlmostFlatlandsReloaded extends JavaPlugin {
 				ymlFileMessage.set("HelpText.3", "This command is reloading the Config.yml and Messages.yml file.");
 				ymlFileMessage.save(fileMessages);
 			} catch (IOException e1) {
-				ServerLog.err("Can't create the Messages.yml. [" + e1.getMessage() +"]");
+				ServerLog.err("Can't create the Messages.yml. [" + e1.getMessage() + "]");
 			}
 		}
-
 
 		Options.msg.put("[AlmostFlatLandsReloaded]", ChatColor.translateAlternateColorCodes('&', ymlFileMessage.getString("[AlmostFlatLandsReloaded]")));
 		Options.msg.put("color.1", ChatColor.translateAlternateColorCodes('&', ymlFileMessage.getString("Color.1")));
@@ -301,7 +338,6 @@ public class AlmostFlatlandsReloaded extends JavaPlugin {
 		CommandListener.addCommand(new Command("/AFLR reload", "AlmostFlatLandsReloaded.Reload", ChatColor.translateAlternateColorCodes('&', ymlFileMessage.getString("HelpText.3"))));
 	}
 
-
 	@Override
 	public void onDisable() {
 		System.out.println("[AlmostFlatLandsReloaded] a Plugin by F_o_F_1092");
@@ -317,6 +353,9 @@ public class AlmostFlatlandsReloaded extends JavaPlugin {
 
 		Options.msg.clear();
 		Options.worldTreeTypes.clear();
+		Options.worldOres.clear();
+		Options.worldOreChances.clear();
+		Options.worldOreNames.clear();
 		Options.worldUndergroundMaterials.clear();
 		Options.worldPreGroundMaterials.clear();
 		Options.worldGroundMaterials.clear();
@@ -362,7 +401,7 @@ public class AlmostFlatlandsReloaded extends JavaPlugin {
 	 * Provides the AFLR World generator depending on the Minecraft version.
 	 */
 	@Override
-	public ChunkGenerator getDefaultWorldGenerator(String worldName, String id){
+	public ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {
 		ChunkGenerator chunkGenerator = null;
 
 		try {
@@ -410,5 +449,4 @@ public class AlmostFlatlandsReloaded extends JavaPlugin {
 
 		return biomeProvider;
 	}
-
 }
