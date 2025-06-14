@@ -1,7 +1,6 @@
 package de.fof1092.almostflatlandsreloaded.worldgenerator.v1_8_R3;
 
 import de.fof1092.almostflatlandsreloaded.Options;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -12,9 +11,6 @@ import java.util.Random;
 
 final class BedrockPopulator {
 
-    private static long lastLogTime = 0;
-    private static final long LOG_INTERVAL = 3000; // 3 seconds
-
     private BedrockPopulator() {
         throw new IllegalStateException("Utility class");
     }
@@ -23,12 +19,6 @@ final class BedrockPopulator {
         File fileConfig = new File("plugins/AlmostFlatlandsReloaded/Config.yml");
         FileConfiguration ymlFileConfig = YamlConfiguration.loadConfiguration(fileConfig);
         boolean flatBedrockEnabled = ymlFileConfig.getBoolean("FlatBedrock.Enabled");
-
-        // Log only for first block in chunk (x=0, z=0) and if 3 seconds have passed
-        if (x == 0 && z == 0 && System.currentTimeMillis() - lastLogTime >= LOG_INTERVAL) {
-            Bukkit.getLogger().info("[AlmostFlatLandsReloaded] BedrockPopulator: flatBedrockEnabled=" + flatBedrockEnabled + ", Options.flatBedrockEnabled=" + Options.flatBedrockEnabled);
-            lastLogTime = System.currentTimeMillis();
-        }
 
         if (flatBedrockEnabled) {
             for (int y = Options.worldDepth; y < Options.worldDepth + Options.flatBedrockThickness; y++) {
@@ -57,11 +47,6 @@ final class BedrockPopulator {
                 cd.setBlock(x, Options.worldDepth + 3, z, Material.BEDROCK);
             } else {
                 cd.setBlock(x, Options.worldDepth + 3, z, Material.AIR);
-            }
-
-            // Log random values only once per chunk
-            if (x == 0 && z == 0 && System.currentTimeMillis() - lastLogTime >= LOG_INTERVAL) {
-                Bukkit.getLogger().info("[AlmostFlatLandsReloaded] BedrockPopulator: Random values: r1=" + randomBlockBedrock1 + ", r2=" + randomBlockBedrock2 + ", r3=" + randomBlockBedrock3);
             }
         }
 
