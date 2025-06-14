@@ -130,7 +130,7 @@ public class AlmostFlatlandsReloaded extends JavaPlugin {
     						VersionManager.getBukkitVersion() == BukkitVersion.v1_12_R1) {
     					undergroundMaterials.add("STONE");
     					undergroundMaterials.add("STONE");
-    					undergroundMaterials.add("STONE:5");
+    					undergroundMaterials.add("ANDESITE");
 				} else {
 					undergroundMaterials.add(Material.STONE.toString());
 					undergroundMaterials.add(Material.STONE.toString());
@@ -225,55 +225,30 @@ public class AlmostFlatlandsReloaded extends JavaPlugin {
 		Options.worldGenerateWater = ymlFileConfig.getBoolean("World.GenerateWater");
 		Options.worldOresChance = ymlFileConfig.getInt("World.OresChance");
 
+		Options.worldUndergroundMaterialNames.clear();
+		Options.worldPreGroundMaterialNames.clear();
+		Options.worldGroundMaterialNames.clear();
+		Options.worldWaterGroundMaterialNames.clear();
+
 		for (String strMaterial : ymlFileConfig.getStringList("World.UndergroundMaterials")) {
-			String materialName = strMaterial;
-			byte data = 0;
-			if (VersionManager.getBukkitVersion() == BukkitVersion.v1_8_R3 ||
-					VersionManager.getBukkitVersion() == BukkitVersion.v1_9_R1 ||
-					VersionManager.getBukkitVersion() == BukkitVersion.v1_9_R2 ||
-					VersionManager.getBukkitVersion() == BukkitVersion.v1_10_R1 ||
-					VersionManager.getBukkitVersion() == BukkitVersion.v1_11_R1 ||
-					VersionManager.getBukkitVersion() == BukkitVersion.v1_12_R1) {
-				String[] parts = strMaterial.split(":");
-				materialName = parts[0];
-				if (parts.length > 1) {
-					try {
-						data = Byte.parseByte(parts[1]);
-					} catch (NumberFormatException e) {
-						ServerLog.err("Invalid data value for material: " + strMaterial);
-					}
-				}
-				if (materialName.equals("ANDESITE")) {
-					materialName = "STONE";
-					data = 5;
-				} else if (materialName.equals("GRANITE")) {
-					materialName = "STONE";
-					data = 1;
-				} else if (materialName.equals("DIORITE")) {
-					materialName = "STONE";
-					data = 3;
-				}
-			}
-			try {
-				Material material = Material.valueOf(materialName);
-				Options.worldUndergroundMaterials.add(new Options.MaterialWithData(material, data));
-			} catch (IllegalArgumentException e) {
-				ServerLog.err("Invalid material name: " + strMaterial);
-			}
+			Options.worldUndergroundMaterials.add(processMaterial(strMaterial, VersionManager.getBukkitVersion()));
+			Options.worldUndergroundMaterialNames.add(strMaterial);
 		}
 
 		for (String strMaterial : ymlFileConfig.getStringList("World.PreGroundMaterials")) {
-			Options.worldPreGroundMaterials.add(Material.valueOf(strMaterial));
+			Options.worldPreGroundMaterials.add(processMaterial(strMaterial, VersionManager.getBukkitVersion()));
+			Options.worldPreGroundMaterialNames.add(strMaterial);
 		}
 
 		for (String strMaterial : ymlFileConfig.getStringList("World.GroundMaterials")) {
-			Options.worldGroundMaterials.add(Material.valueOf(strMaterial));
+			Options.worldGroundMaterials.add(processMaterial(strMaterial, VersionManager.getBukkitVersion()));
+			Options.worldGroundMaterialNames.add(strMaterial);
 		}
 
 		for (String strMaterial : ymlFileConfig.getStringList("World.WaterGroundMaterials")) {
-			Options.worldWaterGroundMaterials.add(Material.valueOf(strMaterial));
+			Options.worldWaterGroundMaterials.add(processMaterial(strMaterial, VersionManager.getBukkitVersion()));
+			Options.worldWaterGroundMaterialNames.add(strMaterial);
 		}
-
 
 		File fileMessages = new File("plugins/AlmostFlatLandsReloaded/Messages.yml");
 		FileConfiguration ymlFileMessage = YamlConfiguration.loadConfiguration(fileMessages);
@@ -348,6 +323,40 @@ public class AlmostFlatlandsReloaded extends JavaPlugin {
 		Options.worldWaterGroundMaterials.clear();
 	}
 
+	/**
+	 * Processes material strings with optional data values (e.g., "STONE:5" or "ANDESITE").
+	 * Maps modern materials to legacy equivalents for older versions.
+	 */
+	private static Material processMaterial(String strMaterial, BukkitVersion version) {
+		String materialName = strMaterial;
+		if (strMaterial.contains(":")) {
+			String[] parts = strMaterial.split(":");
+			materialName = parts[0];
+		}
+		if (version == BukkitVersion.v1_8_R3 ||
+				version == BukkitVersion.v1_9_R1 ||
+				version == BukkitVersion.v1_9_R2 ||
+				version == BukkitVersion.v1_10_R1 ||
+				version == BukkitVersion.v1_11_R1 ||
+				version == BukkitVersion.v1_12_R1) {
+			switch (materialName) {
+				case "ANDESITE":
+				case "GRANITE":
+				case "DIORITE":
+					materialName = "STONE";
+					break;
+				case "GRASS_BLOCK":
+					materialName = "GRASS";
+					break;
+			}
+		}
+		try {
+			return Material.valueOf(materialName);
+		} catch (IllegalArgumentException e) {
+			ServerLog.err("Invalid material name: " + strMaterial);
+			return Material.STONE; // Fallback to STONE
+		}
+	}
 
 	/**
 	 * Provides the AFLR World generator depending on the Minecraft version.
