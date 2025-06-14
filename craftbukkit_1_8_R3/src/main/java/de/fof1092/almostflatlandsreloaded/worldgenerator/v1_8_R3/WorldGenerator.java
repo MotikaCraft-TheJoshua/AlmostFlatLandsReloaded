@@ -30,7 +30,7 @@ public class WorldGenerator extends ChunkGenerator {
 				int realX = x + chunkX * 16;
 				int realZ = z + chunkZ * 16;
 
-		  	      double normalHeight = (wgen.noise(realX, realZ, 0.5D, 0.5D) / 0.75) + Options.worldHeight;
+				double normalHeight = (wgen.noise(realX, realZ, 0.5D, 0.5D) / 0.75) + Options.worldHeight;
 
 				// Pass original material names to StonePopulator
 				cd = StonePopulator.populate(x, (int) normalHeight, z, cd, random, Options.worldUndergroundMaterialNames);
@@ -55,7 +55,7 @@ public class WorldGenerator extends ChunkGenerator {
 		List<BlockPopulator> populators = new ArrayList<>();
 		populators.add(new FlowerAndGrassPopulator());
 		populators.add(new TreePopulator());
-	    
+
 		return populators;
 	}
 
