@@ -20,33 +20,46 @@ final class BedrockPopulator {
     }
 
     static ChunkData populate(int x, int z, ChunkData cd, Random random) {
-        // Force reread config to ensure correct value
         File fileConfig = new File("plugins/AlmostFlatlandsReloaded/Config.yml");
         FileConfiguration ymlFileConfig = YamlConfiguration.loadConfiguration(fileConfig);
         boolean flatBedrockEnabled = ymlFileConfig.getBoolean("FlatBedrock.Enabled");
-        ServerLog.log("BedrockPopulator: flatBedrockEnabled = " + flatBedrockEnabled + ", Options.flatBedrockEnabled = " + Options.flatBedrockEnabled);
+        ServerLog.log("BedrockPopulator: x=" + x + ", z=" + z + ", flatBedrockEnabled=" + flatBedrockEnabled + ", Options.flatBedrockEnabled=" + Options.flatBedrockEnabled);
 
         if (flatBedrockEnabled) {
+            ServerLog.log("BedrockPopulator: Generating flat bedrock, thickness=" + Options.flatBedrockThickness);
             for (int y = Options.worldDepth; y < Options.worldDepth + Options.flatBedrockThickness; y++) {
                 cd.setBlock(x, y, z, Material.BEDROCK);
+                ServerLog.log("BedrockPopulator: Set bedrock at y=" + y);
             }
         } else {
+            ServerLog.log("BedrockPopulator: Generating randomized bedrock");
             int randomBlockBedrock1 = random.nextInt(100) + 1;
             int randomBlockBedrock2 = random.nextInt(100) + 1;
             int randomBlockBedrock3 = random.nextInt(100) + 1;
+            ServerLog.log("BedrockPopulator: Random values: r1=" + randomBlockBedrock1 + ", r2=" + randomBlockBedrock2 + ", r3=" + randomBlockBedrock3);
 
             cd.setBlock(x, Options.worldDepth, z, Material.BEDROCK);
+            ServerLog.log("BedrockPopulator: Set bedrock at y=" + Options.worldDepth);
 
             if (randomBlockBedrock1 <= 80) {
                 cd.setBlock(x, Options.worldDepth + 1, z, Material.BEDROCK);
+                ServerLog.log("BedrockPopulator: Set bedrock at y=" + (Options.worldDepth + 1));
+            } else {
+                ServerLog.log("BedrockPopulator: Skipped bedrock at y=" + (Options.worldDepth + 1));
             }
 
             if (randomBlockBedrock2 <= 60) {
                 cd.setBlock(x, Options.worldDepth + 2, z, Material.BEDROCK);
+                ServerLog.log("BedrockPopulator: Set bedrock at y=" + (Options.worldDepth + 2));
+            } else {
+                ServerLog.log("BedrockPopulator: Skipped bedrock at y=" + (Options.worldDepth + 2));
             }
 
             if (randomBlockBedrock3 <= 40) {
                 cd.setBlock(x, Options.worldDepth + 3, z, Material.BEDROCK);
+                ServerLog.log("BedrockPopulator: Set bedrock at y=" + (Options.worldDepth + 3));
+            } else {
+                ServerLog.log("BedrockPopulator: Skipped bedrock at y=" + (Options.worldDepth + 3));
             }
         }
 
