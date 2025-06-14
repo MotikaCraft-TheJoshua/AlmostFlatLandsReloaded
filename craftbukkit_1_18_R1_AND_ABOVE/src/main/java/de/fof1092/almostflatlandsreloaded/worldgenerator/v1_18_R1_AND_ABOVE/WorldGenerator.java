@@ -31,17 +31,16 @@ public class WorldGenerator extends ChunkGenerator {
 				int realX = x + chunkX * 16;
 				int realZ = z + chunkZ * 16;
 
-				double normalHight = (wgen.noise(realX, realZ, 0.5D, 0.5D) / 0.75) + Options.worldHeight;
+				double normalHeight = (wgen.noise(realX, realZ, 0.5D, 0.5D) / 0.75) + Options.worldHeight;
 
-
-				cd = StonePopulator.populate(x, (int) normalHight, z, cd, random);
-
-				if (Options.worldOresChance > 0) {
-					cd = OrePopulator.populate(x, (int) normalHight, z, cd, random);
+				// Bedrock first to prevent overwrites
+				cd = BedrockPopulator.populate(x, z, cd, random);
+				// Stone and ores start above bedrock
+				cd = StonePopulator.populate(x, (int) normalHeight, z, cd, random);
+				if (!Options.worldOres.isEmpty()) {
+					cd = OrePopulator.populate(x, (int) normalHeight, z, cd, random);
 				}
-
-				cd = BeadrockPopulator.populate(x, z, cd, random);
-				cd = GroundPopulator.populate(x, (int) normalHight, z, cd, random);
+				cd = GroundPopulator.populate(x, (int) normalHeight, z, cd, random);
 			}
 		}
 	}
