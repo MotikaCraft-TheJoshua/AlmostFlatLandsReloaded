@@ -1,11 +1,11 @@
 package de.fof1092.almostflatlandsreloaded.worldgenerator.v1_8_R3;
 
+import de.fof1092.almostflatlandsreloaded.Options;
+import org.bukkit.Bukkit;
+import org.bukkit.generator.ChunkGenerator.ChunkData;
+
 import java.util.List;
 import java.util.Random;
-
-import de.fof1092.almostflatlandsreloaded.Options;
-import org.bukkit.Material;
-import org.bukkit.generator.ChunkGenerator.ChunkData;
 
 /**
  * StonePopulator is responsible for creating the stone layer of the AFLR world.
