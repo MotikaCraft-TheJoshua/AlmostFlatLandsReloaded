@@ -226,7 +226,40 @@ public class AlmostFlatlandsReloaded extends JavaPlugin {
 		Options.worldOresChance = ymlFileConfig.getInt("World.OresChance");
 
 		for (String strMaterial : ymlFileConfig.getStringList("World.UndergroundMaterials")) {
-			Options.worldUndergroundMaterials.add(Material.valueOf(strMaterial));
+			String materialName = strMaterial;
+			byte data = 0;
+			if (VersionManager.getBukkitVersion() == BukkitVersion.v1_8_R3 ||
+					VersionManager.getBukkitVersion() == BukkitVersion.v1_9_R1 ||
+					VersionManager.getBukkitVersion() == BukkitVersion.v1_9_R2 ||
+					VersionManager.getBukkitVersion() == BukkitVersion.v1_10_R1 ||
+					VersionManager.getBukkitVersion() == BukkitVersion.v1_11_R1 ||
+					VersionManager.getBukkitVersion() == BukkitVersion.v1_12_R1) {
+				String[] parts = strMaterial.split(":");
+				materialName = parts[0];
+				if (parts.length > 1) {
+					try {
+						data = Byte.parseByte(parts[1]);
+					} catch (NumberFormatException e) {
+						ServerLog.err("Invalid data value for material: " + strMaterial);
+					}
+				}
+				if (materialName.equals("ANDESITE")) {
+					materialName = "STONE";
+					data = 5;
+				} else if (materialName.equals("GRANITE")) {
+					materialName = "STONE";
+					data = 1;
+				} else if (materialName.equals("DIORITE")) {
+					materialName = "STONE";
+					data = 3;
+				}
+			}
+			try {
+				Material material = Material.valueOf(materialName);
+				Options.worldUndergroundMaterials.add(new Options.MaterialWithData(material, data));
+			} catch (IllegalArgumentException e) {
+				ServerLog.err("Invalid material name: " + strMaterial);
+			}
 		}
 
 		for (String strMaterial : ymlFileConfig.getStringList("World.PreGroundMaterials")) {
@@ -245,7 +278,7 @@ public class AlmostFlatlandsReloaded extends JavaPlugin {
 		File fileMessages = new File("plugins/AlmostFlatLandsReloaded/Messages.yml");
 		FileConfiguration ymlFileMessage = YamlConfiguration.loadConfiguration(fileMessages);
 
-		if(!fileMessages.exists()) {
+		if (!fileMessages.exists()) {
 
 			try {
 				ymlFileMessage.set("Version", UpdateListener.getUpdateDoubleVersion());
