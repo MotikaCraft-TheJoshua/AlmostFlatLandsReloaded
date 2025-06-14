@@ -1,3 +1,4 @@
+```java
 package de.fof1092.almostflatlandsreloaded.worldgenerator.v1_8_R3;
 
 import de.fof1092.almostflatlandsreloaded.Options;
@@ -5,12 +6,10 @@ import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.generator.ChunkGenerator.ChunkData;
-
 import java.io.File;
 import java.util.Random;
 
 final class BedrockPopulator {
-
     private BedrockPopulator() {
         throw new IllegalStateException("Utility class");
     }
