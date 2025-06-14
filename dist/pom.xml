@@ -52,7 +52,7 @@
             <artifactId>almostflatlandsreloaded-craftbukkit_1_8_R3</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
-        <dependency>
+        <!--dependency>
             <groupId>de.fof1092</groupId>
             <artifactId>almostflatlandsreloaded-craftbukkit_1_9_R1</artifactId>
             <version>${project.parent.version}</version>
@@ -117,7 +117,7 @@
             <artifactId>almostflatlandsreloaded-craftbukkit_1_17_R1</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
-        <dependency>
+        <dependency!-->
             <groupId>de.fof1092</groupId>
             <artifactId>almostflatlandsreloaded-craftbukkit_1_18_R1_AND_ABOVE</artifactId>
             <version>${project.parent.version}</version>
