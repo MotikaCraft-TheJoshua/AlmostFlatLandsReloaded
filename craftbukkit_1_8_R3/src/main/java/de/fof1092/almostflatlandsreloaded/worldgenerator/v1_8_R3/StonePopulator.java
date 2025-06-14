@@ -31,7 +31,8 @@ final class StonePopulator {
 	 * @return the new ChunkData of the chunk
 	 */
 	static ChunkData populate(int x, int y, int z, ChunkData cd, Random random, List<String> originalMaterials) {
-		for (int newY = Options.worldDepth + 1; newY < y; newY++) {
+		int startY = Options.worldDepth + (Options.flatBedrockEnabled ? Options.flatBedrockThickness : 1);
+		for (int newY = startY; newY < y; newY++) {
 			int randomBlockType = random.nextInt(Options.worldUndergroundMaterials.size());
 			cd.setBlock(x, newY, z, Options.worldUndergroundMaterials.get(randomBlockType));
 		}
