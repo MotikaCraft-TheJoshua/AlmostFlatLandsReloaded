@@ -11,7 +11,7 @@ import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.util.noise.SimplexOctaveGenerator;
 
 /**
- * WorldGenerator manages the AFLR world generator.
+ * WorldGenerator manages the AFLR world generator for Minecraft 1.8.
  */
 public class WorldGenerator extends ChunkGenerator {
 
@@ -32,13 +32,14 @@ public class WorldGenerator extends ChunkGenerator {
 
 				double normalHeight = (wgen.noise(realX, realZ, 0.5D, 0.5D) / 0.75) + Options.worldHeight;
 
-				// Pass original material names to StonePopulator
-				cd = StonePopulator.populate(x, (int) normalHeight, z, cd, random, Options.worldUndergroundMaterialNames);
+				// Pass original material names and world to StonePopulator
+				cd = StonePopulator.populate(x, (int) normalHeight, z, cd, random, Options.worldUndergroundMaterialNames, world);
 				if (Options.worldOresChance > 0) {
 					cd = OrePopulator.populate(x, (int) normalHeight, z, cd, random);
 				}
 				cd = BeadrockPopulator.populate(x, z, cd, random);
-				cd = GroundPopulator.populate(x, (int) normalHeight, z, cd, random);
+				// Pass world to GroundPopulator
+				cd = GroundPopulator.populate(x, (int) normalHeight, z, cd, random, world);
 
 				biomeGrid.setBiome(x, z, Options.worldBiome);
 			}
@@ -58,5 +59,4 @@ public class WorldGenerator extends ChunkGenerator {
 
 		return populators;
 	}
-
 }
