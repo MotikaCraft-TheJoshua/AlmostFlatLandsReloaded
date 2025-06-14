@@ -45,7 +45,7 @@ final class BedrockPopulator {
                 cd.setBlock(x, Options.worldDepth + 1, z, Material.BEDROCK);
                 Bukkit.getLogger().info("[AlmostFlatLandsReloaded] BedrockPopulator: Set bedrock at y=" + (Options.worldDepth + 1));
             } else {
-                cd.setBlock(x, Options.worldDepth + 1, z, Material.AIR); // Explicitly set air for gaps
+                cd.setBlock(x, Options.worldDepth + 1, z, Material.AIR);
                 Bukkit.getLogger().info("[AlmostFlatLandsReloaded] BedrockPopulator: Set air at y=" + (Options.worldDepth + 1));
             }
 
