@@ -31,5 +31,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: AlmostFlatLandsReloaded-JAR
-          path: dist/target/*.jar
+          path: target/*.jar
           if-no-files-found: error
