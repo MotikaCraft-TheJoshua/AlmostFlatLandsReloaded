@@ -17,9 +17,10 @@ final class BedrockPopulator {
         File fileConfig = new File("plugins/AlmostFlatlandsReloaded/Config.yml");
         FileConfiguration ymlFileConfig = YamlConfiguration.loadConfiguration(fileConfig);
         boolean flatBedrockEnabled = ymlFileConfig.getBoolean("FlatBedrock.Enabled");
+        int thickness = ymlFileConfig.getInt("FlatBedrock.Thickness");
 
         if (flatBedrockEnabled) {
-            for (int y = Options.worldDepth; y < Options.worldDepth + Options.flatBedrockThickness; y++) {
+            for (int y = Options.worldDepth; y < Options.worldDepth + thickness; y++) {
                 cd.setBlock(x, y, z, Material.BEDROCK);
             }
         } else {
