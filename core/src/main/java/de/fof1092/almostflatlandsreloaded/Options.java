@@ -73,22 +73,25 @@ public final class Options {
 	 * Determines which material is used in the underground in the AFLR world.
 	 */
 	public static List<Material> worldUndergroundMaterials = new ArrayList<>();
+	public static List<String> worldUndergroundMaterialNames = new ArrayList<>();
 
 	/**
 	 * Determines which material is under the Ground Material in the AFLR world.
 	 */
 	public static List<Material> worldPreGroundMaterials = new ArrayList<>();
+	public static List<String> worldPreGroundMaterialNames = new ArrayList<>();
 
 	/**
 	 * Determines which material is on the top level in the AFLR world.
 	 */
 	public static List<Material> worldGroundMaterials = new ArrayList<>();
+	public static List<String> worldGroundMaterialNames = new ArrayList<>();
 
 	/**
 	 * Determines which material is under the water in the AFLR world.
 	 */
 	public static List<Material> worldWaterGroundMaterials = new ArrayList<>();
-
+	public static List<String> worldWaterGroundMaterialNames = new ArrayList<>();
 
 	/**
 	 * Options has a private constructor, because it is a utility class.
