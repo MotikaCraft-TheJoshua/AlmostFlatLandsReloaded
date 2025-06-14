@@ -27,11 +27,6 @@ public final class Options {
 	/**
 	 * Determines the depth of the AFLR world.
 	 */
-	public static int getWorldDepth;
-
-	/**
-	 * Determines the depth of the AFLR world.
-	 */
 	public static int worldDepth;
 
 	/**
@@ -65,9 +60,29 @@ public final class Options {
 	public static boolean worldGenerateWater;
 
 	/**
-	 * Determines how many ores are generated in the AFLR world.
+	 * Determines whether a flat bedrock floor is generated.
 	 */
-	public static int worldOresChance;
+	public static boolean flatBedrockEnabled;
+
+	/**
+	 * Determines the thickness of the flat bedrock floor (1–3).
+	 */
+	public static int flatBedrockThickness;
+
+	/**
+	 * Determines which materials are used as ores in the AFLR world.
+	 */
+	public static List<Material> worldOres = new ArrayList<>();
+
+	/**
+	 * Determines the spawn chances (1–100) for each ore.
+	 */
+	public static List<Integer> worldOreChances = new ArrayList<>();
+
+	/**
+	 * Stores the original ore material names from Config.yml.
+	 */
+	public static List<String> worldOreNames = new ArrayList<>();
 
 	/**
 	 * Determines which material is used in the underground in the AFLR world.
@@ -99,5 +114,4 @@ public final class Options {
 	private Options() {
 		throw new IllegalStateException("Utility class");
 	}
-
 }
