@@ -221,10 +221,8 @@ public class AlmostFlatlandsReloaded extends JavaPlugin {
 		Options.worldDepth = ymlFileConfig.getInt("World.Depth");
 
 		Options.flatBedrockEnabled = ymlFileConfig.getBoolean("FlatBedrock.Enabled");
-		ServerLog.log("FlatBedrock.Enabled read from Config.yml: " + Options.flatBedrockEnabled);
 		int thickness = ymlFileConfig.getInt("FlatBedrock.Thickness");
 		Options.flatBedrockThickness = Math.max(1, Math.min(3, thickness));
-		ServerLog.log("FlatBedrock.Thickness set to: " + Options.flatBedrockThickness);
 
 		try {
 			Options.worldBiome = Biome.valueOf(ymlFileConfig.getString("World.Biome"));
