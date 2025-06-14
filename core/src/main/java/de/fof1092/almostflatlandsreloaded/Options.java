@@ -15,6 +15,31 @@ import org.bukkit.block.Biome;
 public final class Options {
 
 	/**
+	 * Inner class to store a Material and its data value.
+	 */
+	public static class MaterialWithData {
+		private final Material material;
+		private final byte data;
+
+		public MaterialWithData(Material material, byte data) {
+			this.material = material;
+			this.data = data;
+		}
+
+		public MaterialWithData(Material material) {
+			this(material, (byte) 0);
+		}
+
+		public Material getMaterial() {
+			return material;
+		}
+
+		public byte getData() {
+			return data;
+		}
+	}
+
+	/**
 	 * Manages the messages of the plugin.
 	 */
 	public static Map<String, String> msg = new HashMap<>();
