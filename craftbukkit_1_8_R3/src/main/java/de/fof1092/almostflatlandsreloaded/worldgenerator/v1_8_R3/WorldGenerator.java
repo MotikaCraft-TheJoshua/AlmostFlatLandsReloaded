@@ -32,14 +32,14 @@ public class WorldGenerator extends ChunkGenerator {
 
 				double normalHeight = (wgen.noise(realX, realZ, 0.5D, 0.5D) / 0.75) + Options.worldHeight;
 
-				// Pass original material names and world to StonePopulator
-				cd = StonePopulator.populate(x, (int) normalHeight, z, cd, random, Options.worldUndergroundMaterialNames, world);
+				// Pass original material names to StonePopulator
+				cd = StonePopulator.populate(x, (int) normalHeight, z, cd, random, Options.worldUndergroundMaterialNames);
 				if (Options.worldOresChance > 0) {
 					cd = OrePopulator.populate(x, (int) normalHeight, z, cd, random);
 				}
 				cd = BeadrockPopulator.populate(x, z, cd, random);
-				// Pass world to GroundPopulator
-				cd = GroundPopulator.populate(x, (int) normalHeight, z, cd, random, world);
+				// Use original GroundPopulator signature
+				cd = GroundPopulator.populate(x, (int) normalHeight, z, cd, random);
 
 				biomeGrid.setBiome(x, z, Options.worldBiome);
 			}
@@ -54,6 +54,7 @@ public class WorldGenerator extends ChunkGenerator {
 	@Override
 	public List<BlockPopulator> getDefaultPopulators(World world) {
 		List<BlockPopulator> populators = new ArrayList<>();
+		populators.add(new DataValuePopulator());
 		populators.add(new FlowerAndGrassPopulator());
 		populators.add(new TreePopulator());
 
