@@ -4,6 +4,7 @@ import java.util.Random;
 
 import de.fof1092.almostflatlandsreloaded.Options;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.generator.ChunkGenerator.ChunkData;
 
 /**
