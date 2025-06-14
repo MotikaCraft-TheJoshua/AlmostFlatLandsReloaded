@@ -122,9 +122,20 @@ public class AlmostFlatlandsReloaded extends JavaPlugin {
 				ymlFileConfig.set("World.OresChance", 100);
 
 				List<String> undergroundMaterials = new ArrayList<>();
-				undergroundMaterials.add(Material.STONE.toString());
-				undergroundMaterials.add(Material.STONE.toString());
-				undergroundMaterials.add(Material.ANDESITE.toString());
+				if (VersionManager.getBukkitVersion() == BukkitVersion.v1_8_R3 ||
+    						VersionManager.getBukkitVersion() == BukkitVersion.v1_9_R1 ||
+    						VersionManager.getBukkitVersion() == BukkitVersion.v1_9_R2 ||
+    						VersionManager.getBukkitVersion() == BukkitVersion.v1_10_R1 ||
+    						VersionManager.getBukkitVersion() == BukkitVersion.v1_11_R1 ||
+    						VersionManager.getBukkitVersion() == BukkitVersion.v1_12_R1) {
+    					undergroundMaterials.add("STONE");
+    					undergroundMaterials.add("STONE");
+    					undergroundMaterials.add("STONE:5");
+				} else {
+					undergroundMaterials.add(Material.STONE.toString());
+					undergroundMaterials.add(Material.STONE.toString());
+					undergroundMaterials.add(Material.ANDESITE.toString());
+				}
 				ymlFileConfig.set("World.UndergroundMaterials", undergroundMaterials);
 
 				List<String> preGroundMaterials = new ArrayList<>();
