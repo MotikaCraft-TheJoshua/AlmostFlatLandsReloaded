@@ -1,23 +1,18 @@
 package de.fof1092.almostflatlandsreloaded.worldgenerator.v1_8_R3;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 
 import de.fof1092.almostflatlandsreloaded.Options;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.block.Block;
 import org.bukkit.generator.BlockPopulator;
+import org.bukkit.util.noise.SimplexOctaveGenerator;
 
 /**
  * DataValuePopulator applies legacy data values for blocks in Minecraft 1.8–1.12.
  */
 final class DataValuePopulator extends BlockPopulator {
-
-	// Cache for block positions and their intended data values
-	private static final Map<String, Byte> blockDataCache = new HashMap<>();
 
 	/**
 	 * Populates data values for blocks in the chunk.
@@ -29,8 +24,10 @@ final class DataValuePopulator extends BlockPopulator {
 				int realX = x + chunk.getX() * 16;
 				int realZ = z + chunk.getZ() * 16;
 
-				// Determine height for this column
-				int height = (int) ((new SimplexOctaveGenerator(world, 8).setScale(0.015625D).noise(realX, realZ, 0.5D, 0.5D) / 0.75) + Options.worldHeight);
+				// Replicate height calculation from WorldGenerator
+				SimplexOctaveGenerator wgen = new SimplexOctaveGenerator(world, 8);
+				wgen.setScale(0.015625D);
+				int height = (int) ((wgen.noise(realX, realZ, 0.5D, 0.5D) / 0.75) + Options.worldHeight);
 
 				// Process underground materials
 				for (int y = Options.worldDepth + 1; y < height; y++) {
