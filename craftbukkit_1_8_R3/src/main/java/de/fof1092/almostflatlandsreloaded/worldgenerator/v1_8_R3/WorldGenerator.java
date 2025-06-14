@@ -32,13 +32,13 @@ public class WorldGenerator extends ChunkGenerator {
 
 				double normalHeight = (wgen.noise(realX, realZ, 0.5D, 0.5D) / 0.75) + Options.worldHeight;
 
-				// Pass original material names to StonePopulator
+				// Bedrock first to ensure it’s not overwritten
+				cd = BedrockPopulator.populate(x, z, cd, random);
+				// Stone and ores start above bedrock thickness
 				cd = StonePopulator.populate(x, (int) normalHeight, z, cd, random, Options.worldUndergroundMaterialNames);
-				if (Options.worldOresChance > 0) {
+				if (!Options.worldOres.isEmpty()) {
 					cd = OrePopulator.populate(x, (int) normalHeight, z, cd, random);
 				}
-				cd = BeadrockPopulator.populate(x, z, cd, random);
-				// Use original GroundPopulator signature
 				cd = GroundPopulator.populate(x, (int) normalHeight, z, cd, random);
 
 				biomeGrid.setBiome(x, z, Options.worldBiome);
