@@ -29,8 +29,11 @@ final class DataValuePopulator extends BlockPopulator {
 				wgen.setScale(0.015625D);
 				int height = (int) ((wgen.noise(realX, realZ, 0.5D, 0.5D) / 0.75) + Options.worldHeight);
 
+				// Start above bedrock
+				int startY = Options.worldDepth + (Options.flatBedrockEnabled ? Options.flatBedrockThickness : 1);
+
 				// Process underground materials
-				for (int y = Options.worldDepth + 1; y < height; y++) {
+				for (int y = startY; y < height; y++) {
 					int randomBlockType = random.nextInt(Options.worldUndergroundMaterials.size());
 					Material material = Options.worldUndergroundMaterials.get(randomBlockType);
 					String originalName = Options.worldUndergroundMaterialNames.get(randomBlockType);
@@ -39,6 +42,30 @@ final class DataValuePopulator extends BlockPopulator {
 						byte data = getDataValue(originalName);
 						if (data != 0) {
 							Util.setBlockFast(world, realX, y, realZ, material.getId(), data);
+						}
+					}
+				}
+
+				// Process ores
+				for (int i = 0; i < Options.worldOres.size(); i++) {
+					Material material = Options.worldOres.get(i);
+					String originalName = Options.worldOreNames.get(i);
+					if (material == Material.STONE) {
+						byte data = getDataValue(originalName);
+						if (data != 0) {
+							// Apply data value to ore positions (simplified, assumes ore placement logic)
+							int chance = Options.worldOreChances.get(i);
+							int maxHeight = getOreMaxHeight(material);
+							int attempts = getOreAttempts(material);
+							for (int j = 0; j < attempts; j++) {
+								int roll = random.nextInt(100) + 1;
+								if (roll <= chance) {
+									int rndY = random.nextInt((maxHeight - startY) - 4) + 4 + startY;
+									if (rndY <= height) {
+										Util.setBlockFast(world, realX, rndY, realZ, material.getId(), data);
+									}
+								}
+							}
 						}
 					}
 				}
@@ -115,6 +142,51 @@ final class DataValuePopulator extends BlockPopulator {
 				return 0; // GRASS
 			default:
 				return 0; // Default for STONE or other materials
+		}
+	}
+
+	/**
+	 * Returns the max height for an ore material.
+	 */
+	private int getOreMaxHeight(Material material) {
+		switch (material.toString()) {
+			case "COAL_ORE":
+				return 128;
+			case "IRON_ORE":
+				return 64;
+			case "GOLD_ORE":
+			case "EMERALD_ORE":
+				return 32;
+			case "REDSTONE_ORE":
+			case "DIAMOND_ORE":
+			case "LAPIS_ORE":
+				return 16;
+			default:
+				return 64;
+		}
+	}
+
+	/**
+	 * Returns the number of placement attempts for an ore material.
+	 */
+	private int getOreAttempts(Material material) {
+		switch (material.toString()) {
+			case "COAL_ORE":
+				return 20 * 10;
+			case "IRON_ORE":
+				return 20 * 6;
+			case "GOLD_ORE":
+				return 1 * 4;
+			case "EMERALD_ORE":
+				return 4 * 1;
+			case "REDSTONE_ORE":
+				return 8 * 6;
+			case "DIAMOND_ORE":
+				return 1 * 7;
+			case "LAPIS_ORE":
+				return 1 * 5;
+			default:
+				return 10;
 		}
 	}
 }
